@@ -1,7 +1,3 @@
-# farmerportal
-
-> Farmer Portal
-
 ## Build Setup
 
 ``` bash
