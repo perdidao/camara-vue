@@ -1,33 +1,58 @@
 <template>
-  <v-layout justify-center>
-    <v-flex xs12 md6>
-      <v-list>
-        <v-list-item
-          v-for="(item,index) in items"
-          :key="index"
-          :to="'deputado/' + item.id"
-          router
-          exact
-        >
-          <v-list-item-avatar>
+  <v-container>
+    <v-row md12 class="d-flex justify-space-between flex-wrap">
+      <v-card
+        v-for="(item,index) in items"
+        :key="index"
+        exact
+        max-width="24%"
+        class="mb-6"
+      >
+        <v-list-item three-line>
+          <v-list-item-content>
+            <span class="caption mb-4">
+              {{ item.siglaPartido }} ({{ item.siglaUf }})
+            </span>
+            <v-list-item-title class="headline mb-1">
+              {{ item.nome }}
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ item.email }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-avatar
+            tile
+            size="80"
+          >
             <v-img :src="item.urlFoto" :alt="item.nome" />
           </v-list-item-avatar>
-          <v-list-item-title>{{ item.nome }}</v-list-item-title>
         </v-list-item>
-      </v-list>
-      <div class="d-flex justify-space-between mt-8">
-        <v-btn color="primary" :disabled="!prevStatus" @click="previousPage(pagina)">
-          Página anterior
-        </v-btn>
-        <v-btn color="primary" :disabled="!nextStatus" @click="nextPage(pagina)">
-          Próxima página
-        </v-btn>
-      </div>
-    </v-flex>
-    <v-flex xs12 md6>
-      <pre class="caption">{{ items }}</pre>
-    </v-flex>
-  </v-layout>
+        <v-card-actions>
+          <v-btn
+            router
+            :to="'deputado/' + item.id"
+            text
+            color="primary"
+          >
+            Ver mais
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-row>
+    <v-row class="d-flex justify-center mt-8">
+      <v-btn color="primary" class="mx-4" :disabled="!prevStatus" @click="previousPage(pagina)">
+        Página anterior
+      </v-btn>
+      <v-btn color="primary" class="mx-4" :disabled="!nextStatus" @click="nextPage(pagina)">
+        Próxima página
+      </v-btn>
+    </v-row>
+    <!-- <v-row>
+      <v-flex md12>
+        <pre class="caption">{{ items }}</pre>
+      </v-flex>
+    </v-row> -->
+  </v-container>
 </template>
 
 <script>
@@ -53,7 +78,7 @@ export default {
           accept: 'application/json'
         })
         .then(response => (
-          scope.length = Math.ceil(response.data.dados.length / 10)
+          scope.length = Math.ceil(response.data.dados.length / 12)
         ))
     },
     fetchDeputados (page) {
@@ -62,7 +87,7 @@ export default {
         this.fetchLength()
       }
       axios
-        .get(process.env.api + 'deputados?itens=10&pagina=' + pagina, {
+        .get(process.env.api + 'deputados?itens=12&pagina=' + pagina, {
           accept: 'application/json'
         })
         .then(response => (
@@ -89,8 +114,6 @@ export default {
       if (prev > 0) {
         self.fetchDeputados(prev)
         scope.pagina = prev
-      } else {
-        alert('Você está no início da lista')
       }
     },
     nextPage (curPage) {
@@ -100,8 +123,6 @@ export default {
       if (next <= scope.length) {
         self.fetchDeputados(next)
         scope.pagina = next
-      } else {
-        alert('Você chegou ao fim da lista')
       }
     }
   }
