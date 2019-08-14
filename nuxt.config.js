@@ -9,8 +9,8 @@ export default {
   ** Headers of the page
   */
   head: {
-    titleTemplate: '%s - ' + process.env.npm_package_title,
-    title: process.env.npm_package_title || '',
+    titleTemplate: '%s' + process.env.npm_package_title,
+    title: '',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },

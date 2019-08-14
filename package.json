@@ -1,6 +1,6 @@
 {
   "name": "camara",
-  "title": "Câmara dos Deputados",
+  "title": "Dados Abertos | Câmara dos Deputados",
   "version": "1.0.0",
   "description": "Projeto para exploração dos dados abertos da câmara dos deputados usando vue + nuxt",
   "author": "Lucas Almeida",

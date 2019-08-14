@@ -1,5 +1,18 @@
 <template>
   <v-container>
+    <v-layout md12 class="d-flex justify-space-between">
+      <v-flex md9>
+        <p>Página {{ pagina }} de {{ length }}</p>
+      </v-flex>
+      <v-flex md3>
+        <v-select
+          v-model="perPage"
+          :items="pageSizes"
+          label="Deputados por página"
+          @change="updatePageSize($event)"
+        />
+      </v-flex>
+    </v-layout>
     <v-row md12 class="d-flex justify-space-between flex-wrap">
       <v-card
         v-for="(item,index) in items"
@@ -62,8 +75,10 @@ import scope from 'scope'
 export default {
   data: () => ({
     items: null,
-    length: 1,
-    pagina: 1,
+    pageSizes: [4, 8, 12, 16, 32],
+    length: scope.length || null,
+    pagina: scope.pagina || 1,
+    perPage: scope.perPage || 12,
     nextStatus: true,
     prevStatus: false
   }),
@@ -77,17 +92,20 @@ export default {
         .get(process.env.api + 'deputados', {
           accept: 'application/json'
         })
-        .then(response => (
-          scope.length = Math.ceil(response.data.dados.length / 12)
-        ))
+        .then((response) => {
+          this.length = Math.ceil(response.data.dados.length / this.perPage)
+          scope.length = this.length
+        })
     },
     fetchDeputados (page) {
       const pagina = page || 1
+      const pages = this.perPage
+      this.pagina = page
       if (!scope.length) {
         this.fetchLength()
       }
       axios
-        .get(process.env.api + 'deputados?itens=12&pagina=' + pagina, {
+        .get(process.env.api + 'deputados?itens=' + pages + '&pagina=' + pagina, {
           accept: 'application/json'
         })
         .then(response => (
@@ -124,6 +142,13 @@ export default {
         self.fetchDeputados(next)
         scope.pagina = next
       }
+    },
+    updatePageSize (e) {
+      this.perPage = parseInt(e)
+      scope.perPage = this.perPage
+      const pagina = scope.pagina || this.pagina
+      this.fetchLength()
+      this.fetchDeputados(pagina)
     }
   }
 }

@@ -67,7 +67,7 @@ export default {
   }),
   head () {
     return {
-      title: this.item.ultimoStatus.nomeEleitoral
+      title: this.item.ultimoStatus.nomeEleitoral + ' | '
     }
   },
   asyncData ({ params }) {
