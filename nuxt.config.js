@@ -1,4 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export default {
   mode: 'universal',
@@ -16,6 +19,9 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
+  },
+  router: {
+    base: process.env.VUE_APP_ROOT_API
   },
   env: {
     api: 'https://dadosabertos.camara.leg.br/api/v2/'

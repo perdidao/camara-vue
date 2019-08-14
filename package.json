@@ -5,6 +5,7 @@
   "description": "Projeto para exploração dos dados abertos da câmara dos deputados usando vue + nuxt",
   "author": "Lucas Almeida",
   "private": true,
+  "buildfor": "production",
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
@@ -14,6 +15,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
+    "dotenv": "^8.0.0",
     "nuxt": "^2.0.0",
     "scope": "^0.10.1",
     "store": "^2.0.12"
