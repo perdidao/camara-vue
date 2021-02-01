@@ -15,7 +15,7 @@
     </v-layout>
     <v-row md12 class="d-flex justify-space-between flex-wrap">
       <v-card
-        v-for="(item,index) in items"
+        v-for="(item, index) in items"
         :key="index"
         exact
         max-width="24%"
@@ -33,30 +33,32 @@
               {{ item.email }}
             </v-list-item-subtitle>
           </v-list-item-content>
-          <v-list-item-avatar
-            tile
-            size="80"
-          >
+          <v-list-item-avatar tile size="80">
             <v-img :src="item.urlFoto" :alt="item.nome" />
           </v-list-item-avatar>
         </v-list-item>
         <v-card-actions>
-          <v-btn
-            router
-            :to="'deputado/' + item.id"
-            text
-            color="primary"
-          >
+          <v-btn router :to="'deputado/' + item.id" text color="primary">
             Ver mais
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-row>
     <v-row class="d-flex justify-center mt-8">
-      <v-btn color="primary" class="mx-4" :disabled="!prevStatus" @click="previousPage(pagina)">
+      <v-btn
+        color="primary"
+        class="mx-4"
+        :disabled="!prevStatus"
+        @click="previousPage(pagina)"
+      >
         Página anterior
       </v-btn>
-      <v-btn color="primary" class="mx-4" :disabled="!nextStatus" @click="nextPage(pagina)">
+      <v-btn
+        color="primary"
+        class="mx-4"
+        :disabled="!nextStatus"
+        @click="nextPage(pagina)"
+      >
         Próxima página
       </v-btn>
     </v-row>
@@ -80,24 +82,24 @@ export default {
     pagina: scope.pagina || 1,
     perPage: scope.perPage || 12,
     nextStatus: true,
-    prevStatus: false
+    prevStatus: false,
   }),
-  mounted () {
+  mounted() {
     const pagina = scope.pagina || this.pagina
     this.fetchDeputados(pagina)
   },
   methods: {
-    fetchLength () {
+    fetchLength() {
       axios
         .get(process.env.api + 'deputados', {
-          accept: 'application/json'
+          accept: 'application/json',
         })
         .then((response) => {
           this.length = Math.ceil(response.data.dados.length / this.perPage)
           scope.length = this.length
         })
     },
-    fetchDeputados (page) {
+    fetchDeputados(page) {
       const pagina = page || 1
       const pages = this.perPage
       this.pagina = page
@@ -105,12 +107,13 @@ export default {
         this.fetchLength()
       }
       axios
-        .get(process.env.api + 'deputados?itens=' + pages + '&pagina=' + pagina, {
-          accept: 'application/json'
-        })
-        .then(response => (
-          this.items = response.data.dados
-        ))
+        .get(
+          process.env.api + 'deputados?itens=' + pages + '&pagina=' + pagina,
+          {
+            accept: 'application/json',
+          }
+        )
+        .then((response) => (this.items = response.data.dados))
         .catch((error) => {
           error({ statusCode: 404, message: 'Página não encontrada' })
         })
@@ -125,7 +128,7 @@ export default {
         this.nextStatus = true
       }
     },
-    previousPage (curPage) {
+    previousPage() {
       const self = this
       const current = scope.pagina || this.pagina
       const prev = current - 1
@@ -134,7 +137,7 @@ export default {
         scope.pagina = prev
       }
     },
-    nextPage (curPage) {
+    nextPage() {
       const self = this
       const current = scope.pagina || this.pagina
       const next = current + 1
@@ -143,13 +146,13 @@ export default {
         scope.pagina = next
       }
     },
-    updatePageSize (e) {
+    updatePageSize(e) {
       this.perPage = parseInt(e)
       scope.perPage = this.perPage
       const pagina = scope.pagina || this.pagina
       this.fetchLength()
       this.fetchDeputados(pagina)
-    }
-  }
+    },
+  },
 }
 </script>

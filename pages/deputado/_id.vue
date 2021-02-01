@@ -3,20 +3,17 @@
     <v-layout>
       <v-flex md2>
         <v-card flat width="100%">
-          <v-img
-            height="400"
-            :src="item.ultimoStatus.urlFoto"
-          />
+          <v-img height="400" :src="item.ultimoStatus.urlFoto" />
           <v-card-title>{{ item.ultimoStatus.nomeEleitoral }}</v-card-title>
           <v-card-text>
-            {{ item.ultimoStatus.siglaPartido }} ({{ item.ultimoStatus.siglaUf }})<br>
+            {{ item.ultimoStatus.siglaPartido }} ({{
+              item.ultimoStatus.siglaUf
+            }})<br />
             Situação atual: {{ item.ultimoStatus.situacao }}
           </v-card-text>
           <v-card-actions>
             <v-btn text color="primary" router to="/">
-              <v-icon left>
-                mdi-arrow-left
-              </v-icon>
+              <v-icon left> mdi-arrow-left </v-icon>
               <span>Voltar</span>
             </v-btn>
           </v-card-actions>
@@ -27,15 +24,21 @@
           {{ item.nomeCivil }}
         </h1>
         <h2 class="display-1 grey--text mb-8">
-          {{ item.ultimoStatus.nomeEleitoral }} ({{ item.ultimoStatus.siglaPartido }}-{{ item.ultimoStatus.siglaUf }})
+          {{ item.ultimoStatus.nomeEleitoral }} ({{
+            item.ultimoStatus.siglaPartido
+          }}-{{ item.ultimoStatus.siglaUf }})
         </h2>
         <p>
           <strong class="d-block">Local de nascimento:</strong>
-          <span class="grey--text">{{ item.municipioNascimento }} / {{ item.ufNascimento }}</span>
+          <span class="grey--text"
+            >{{ item.municipioNascimento }} / {{ item.ufNascimento }}</span
+          >
         </p>
         <p>
           <strong class="d-block">Sexo:</strong>
-          <span class="grey--text">{{ (item.sexo === 'M') ? 'Masculino' : 'Feminino' }}</span>
+          <span class="grey--text">{{
+            item.sexo === 'M' ? 'Masculino' : 'Feminino'
+          }}</span>
         </p>
         <p>
           <strong class="d-block">Idade:</strong>
@@ -47,7 +50,9 @@
         </p>
         <p>
           <strong class="d-block">Website:</strong>
-          <span class="grey--text">{{ (item.urlWebsite) ? item.urlWebsite : 'Não informado' }}</span>
+          <span class="grey--text">{{
+            item.urlWebsite ? item.urlWebsite : 'Não informado'
+          }}</span>
         </p>
         <p>
           <strong class="d-block">Nível de escolaridade:</strong>
@@ -62,32 +67,32 @@
 import axios from 'axios'
 
 export default {
-  data: () => ({
-    item: null
-  }),
-  head () {
-    return {
-      title: this.item.ultimoStatus.nomeEleitoral + ' | '
-    }
-  },
-  asyncData ({ params }) {
+  asyncData({ params }) {
     return axios
       .get(process.env.api + `deputados/${params.id}`, {
-        accept: 'application/json'
+        accept: 'application/json',
       })
       .then((response) => {
         return {
-          item: response.data.dados
+          item: response.data.dados,
         }
       })
   },
+  data: () => ({
+    item: null,
+  }),
+  head() {
+    return {
+      title: this.item.ultimoStatus.nomeEleitoral + ' | ',
+    }
+  },
   // mounted () {},
   methods: {
-    convertDate (date) {
+    convertDate(date) {
       const units = date.split('-')
       return units[2] + '/' + units[1] + '/' + units[0]
     },
-    getAge (date) {
+    getAge(date) {
       const t = new Date()
       const curYear = t.getFullYear()
       const curMonth = t.getMonth() + 1
@@ -99,12 +104,18 @@ export default {
 
       let age = curYear - birthYear
 
-      if (curMonth === birthMonth) { age-- }
-      if (curDay < birthDay) { age-- }
-      if (curMonth < birthMonth) { age-- }
+      if (curMonth === birthMonth) {
+        age--
+      }
+      if (curDay < birthDay) {
+        age--
+      }
+      if (curMonth < birthMonth) {
+        age--
+      }
 
       return age < 0 ? 0 : age
-    }
-  }
+    },
+  },
 }
 </script>

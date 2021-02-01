@@ -33,9 +33,9 @@ export default {
       {
         icon: 'mdi-apps',
         title: 'Deputados',
-        to: '/'
-      }
-    ]
-  })
+        to: '/',
+      },
+    ],
+  }),
 }
 </script>

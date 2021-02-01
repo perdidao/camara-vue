@@ -1,9 +1,5 @@
 <template>
-  <v-footer
-    :fixed="fixed"
-    app
-    class="py-4"
-  >
+  <v-footer :fixed="fixed" app class="py-4">
     <span class="caption">2019 - Todos os direitos reservados</span>
   </v-footer>
 </template>
@@ -11,7 +7,7 @@
 <script>
 export default {
   data: () => ({
-    fixed: false
-  })
+    fixed: false,
+  }),
 }
 </script>
