@@ -29,9 +29,14 @@ export const fetchLength = (self) => {
     })
 }
 
-export const fetchDeputados = (self, page = 1) => {
+/**
+ * Fetch paged list of deputies
+ * @param {Object} self - Vue component object
+ * @param {int} page - Current page
+ */
+export const fetchDeputies = (self, page = 1) => {
   self.loading = true
-  self.pagina = page
+  self.currentPage = page
 
   if (!self.length) {
     fetchLength(self)
@@ -39,7 +44,7 @@ export const fetchDeputados = (self, page = 1) => {
 
   const settings = {
     method: 'GET',
-    url: `${process.env.api}deputados?itens=${self.perPage}&pagina=${self.pagina}`,
+    url: `${process.env.api}deputados?itens=${self.perPage}&pagina=${self.currentPage}`,
     headers: {
       accept: 'application/json',
     },
@@ -62,10 +67,14 @@ export const fetchDeputados = (self, page = 1) => {
   handleButtonStatus(self)
 }
 
+/**
+ * Set current navigation button status
+ * @param {Object} self - Vue component object
+ */
 export const handleButtonStatus = (self) => {
-  if (self.pagina === self.length) {
+  if (self.currentPage === self.length) {
     self.nextStatus = false
-  } else if (self.pagina === 1) {
+  } else if (self.currentPage === 1) {
     self.prevStatus = false
   } else {
     self.prevStatus = true

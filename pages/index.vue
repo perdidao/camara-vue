@@ -2,7 +2,7 @@
   <v-container>
     <v-layout md12 class="d-flex justify-space-between">
       <v-flex md9>
-        <p>Página {{ pagina }} de {{ length }}</p>
+        <p>Página {{ currentPage }} de {{ length }}</p>
       </v-flex>
       <v-flex md3>
         <v-select
@@ -51,7 +51,7 @@
         class="mx-4"
         :loading="loading"
         :disabled="loading || !prevStatus"
-        @click="previousPage(pagina)"
+        @click="previousPage(currentPage)"
       >
         Página anterior
       </v-btn>
@@ -60,7 +60,7 @@
         class="mx-4"
         :loading="loading"
         :disabled="loading || !nextStatus"
-        @click="nextPage(pagina)"
+        @click="nextPage(currentPage)"
       >
         Próxima página
       </v-btn>
@@ -69,39 +69,39 @@
 </template>
 
 <script>
-import { fetchLength, fetchDeputados } from '@/utils/deputados'
+import { fetchLength, fetchDeputies } from '@/utils/deputados'
 
 export default {
   data: () => ({
     items: null,
     pageSizes: [4, 8, 12, 16, 32],
     length: null,
-    pagina: 1,
+    currentPage: 1,
     perPage: 12,
     nextStatus: true,
     prevStatus: false,
     loading: false,
   }),
   mounted() {
-    fetchDeputados(this)
+    fetchDeputies(this)
   },
   methods: {
     previousPage() {
-      const prev = this.pagina - 1
+      const prev = this.currentPage - 1
       if (prev > 0) {
-        fetchDeputados(this, prev)
+        fetchDeputies(this, prev)
       }
     },
     nextPage() {
-      const next = this.pagina + 1
+      const next = this.currentPage + 1
       if (next <= this.length) {
-        fetchDeputados(this, next)
+        fetchDeputies(this, next)
       }
     },
     updatePageSize(e) {
       this.perPage = parseInt(e)
       fetchLength(this)
-      fetchDeputados(this, this.pagina)
+      fetchDeputies(this, this.currentPage)
     },
   },
 }
