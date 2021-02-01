@@ -13,7 +13,8 @@
         />
       </v-flex>
     </v-layout>
-    <v-row md12 class="d-flex justify-space-between flex-wrap">
+    <v-progress-circular v-if="loading" indeterminate color="blue" />
+    <v-row v-else md12 class="d-flex justify-space-between flex-wrap">
       <v-card
         v-for="(item, index) in items"
         :key="index"
@@ -48,7 +49,8 @@
       <v-btn
         color="primary"
         class="mx-4"
-        :disabled="!prevStatus"
+        :loading="loading"
+        :disabled="loading || !prevStatus"
         @click="previousPage(pagina)"
       >
         Página anterior
@@ -56,17 +58,13 @@
       <v-btn
         color="primary"
         class="mx-4"
-        :disabled="!nextStatus"
+        :loading="loading"
+        :disabled="loading || !nextStatus"
         @click="nextPage(pagina)"
       >
         Próxima página
       </v-btn>
     </v-row>
-    <!-- <v-row>
-      <v-flex md12>
-        <pre class="caption">{{ items }}</pre>
-      </v-flex>
-    </v-row> -->
   </v-container>
 </template>
 
@@ -83,6 +81,7 @@ export default {
     perPage: scope.perPage || 12,
     nextStatus: true,
     prevStatus: false,
+    loading: false,
   }),
   mounted() {
     const pagina = scope.pagina || this.pagina
@@ -90,6 +89,7 @@ export default {
   },
   methods: {
     fetchLength() {
+      this.loading = true
       axios
         .get(process.env.api + 'deputados', {
           accept: 'application/json',
@@ -98,8 +98,12 @@ export default {
           this.length = Math.ceil(response.data.dados.length / this.perPage)
           scope.length = this.length
         })
+        .finally(() => {
+          this.loading = false
+        })
     },
     fetchDeputados(page) {
+      this.loading = true
       const pagina = page || 1
       const pages = this.perPage
       this.pagina = page
@@ -116,6 +120,9 @@ export default {
         .then((response) => (this.items = response.data.dados))
         .catch((error) => {
           error({ statusCode: 404, message: 'Página não encontrada' })
+        })
+        .finally(() => {
+          this.loading = false
         })
       if (pagina === scope.length) {
         this.prevStatus = true
