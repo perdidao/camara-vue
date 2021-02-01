@@ -1,3 +1,5 @@
+import pt from 'vuetify/es5/locale/pt'
+
 export default {
   target: "static",
   ssr: false,
@@ -33,6 +35,10 @@ export default {
   ],
   axios: {},
   vuetify: {
+    lang: {
+      locales: { pt },
+      current: 'pt',
+    },
     theme: {
       dark: false,
     },

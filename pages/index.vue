@@ -74,7 +74,7 @@ import { fetchLength, fetchDeputies } from '@/utils/deputies'
 export default {
   data: () => ({
     items: null,
-    pageSizes: [4, 8, 12, 16, 32],
+    pageSizes: [4, 8, 12, 16, 32, 64],
     length: null,
     currentPage: 1,
     perPage: 12,
