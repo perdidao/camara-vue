@@ -70,95 +70,108 @@
 
 <script>
 import axios from 'axios'
-import scope from 'scope'
+// import scope from 'scope'
 
 export default {
   data: () => ({
     items: null,
     pageSizes: [4, 8, 12, 16, 32],
-    length: scope.length || null,
-    pagina: scope.pagina || 1,
-    perPage: scope.perPage || 12,
+    length: null,
+    pagina: 1,
+    perPage: 12,
     nextStatus: true,
     prevStatus: false,
     loading: false,
   }),
   mounted() {
-    const pagina = scope.pagina || this.pagina
+    const pagina = this.pagina
     this.fetchDeputados(pagina)
   },
   methods: {
     fetchLength() {
       this.loading = true
-      axios
-        .get(process.env.api + 'deputados', {
+
+      const settings = {
+        method: 'GET',
+        url: `${process.env.api}deputados`,
+        headers: {
           accept: 'application/json',
-        })
+        },
+      }
+      axios(settings)
         .then((response) => {
           this.length = Math.ceil(response.data.dados.length / this.perPage)
-          scope.length = this.length
+        })
+        .catch((error) => {
+          error({
+            statusCode: error.response.status,
+            message: 'Página não encontrada',
+          })
         })
         .finally(() => {
           this.loading = false
         })
     },
-    fetchDeputados(page) {
+    fetchDeputados(page = 1) {
       this.loading = true
-      const pagina = page || 1
-      const pages = this.perPage
       this.pagina = page
-      if (!scope.length) {
+
+      if (!this.length) {
         this.fetchLength()
       }
-      axios
-        .get(
-          process.env.api + 'deputados?itens=' + pages + '&pagina=' + pagina,
-          {
-            accept: 'application/json',
-          }
-        )
-        .then((response) => (this.items = response.data.dados))
+
+      const settings = {
+        method: 'GET',
+        url: `${process.env.api}deputados?itens=${this.perPage}&pagina=${this.pagina}`,
+        headers: {
+          accept: 'application/json',
+        },
+      }
+
+      axios(settings)
+        .then((response) => {
+          this.items = response.data.dados
+        })
         .catch((error) => {
-          error({ statusCode: 404, message: 'Página não encontrada' })
+          error({
+            statusCode: error.response.status,
+            message: 'Página não encontrada',
+          })
         })
         .finally(() => {
           this.loading = false
         })
-      if (pagina === scope.length) {
-        this.prevStatus = true
+
+      this.handleButtonStatus(this.pagina)
+    },
+    handleButtonStatus(currentPage) {
+      if (currentPage === this.length) {
         this.nextStatus = false
-      } else if (page === 1) {
+      } else if (currentPage === 1) {
         this.prevStatus = false
-        this.nextStatus = true
       } else {
         this.prevStatus = true
         this.nextStatus = true
       }
     },
     previousPage() {
-      const self = this
-      const current = scope.pagina || this.pagina
-      const prev = current - 1
+      const prev = this.pagina - 1
       if (prev > 0) {
-        self.fetchDeputados(prev)
-        scope.pagina = prev
+        this.fetchDeputados(prev)
+        this.pagina = prev
       }
     },
     nextPage() {
-      const self = this
-      const current = scope.pagina || this.pagina
-      const next = current + 1
-      if (next <= scope.length) {
-        self.fetchDeputados(next)
-        scope.pagina = next
+      const next = this.pagina + 1
+      if (next <= this.length) {
+        this.fetchDeputados(next)
+        this.pagina = next
       }
     },
     updatePageSize(e) {
       this.perPage = parseInt(e)
-      scope.perPage = this.perPage
-      const pagina = scope.pagina || this.pagina
       this.fetchLength()
-      this.fetchDeputados(pagina)
+      this.fetchDeputados(this.pagina)
     },
   },
 }
