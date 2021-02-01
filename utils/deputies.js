@@ -72,12 +72,26 @@ export const fetchDeputies = (self, page = 1) => {
  * @param {Object} self - Vue component object
  */
 export const handleButtonStatus = (self) => {
+  verifyCurrentPageCache(self)
   if (self.currentPage === self.length) {
+    self.prevStatus = true
     self.nextStatus = false
   } else if (self.currentPage === 1) {
     self.prevStatus = false
+    self.nextStatus = true
   } else {
     self.prevStatus = true
     self.nextStatus = true
+  }
+}
+
+/**
+ * Check if there's a current page
+ * @param {Object} self - Vue component object
+ */
+export const verifyCurrentPageCache = (self) => {
+  const cachedPage = localStorage.getItem('currentPage')
+  if (cachedPage !== null) {
+    self.currentPage = parseInt(cachedPage)
   }
 }

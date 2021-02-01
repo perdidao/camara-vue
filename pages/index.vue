@@ -47,6 +47,16 @@
     </v-row>
     <v-row class="d-flex justify-center mt-8">
       <v-btn
+        color="green"
+        dark
+        class="mx-4"
+        :loading="loading"
+        :disabled="loading"
+        @click="goToStart"
+      >
+        Primeira
+      </v-btn>
+      <v-btn
         color="primary"
         class="mx-4"
         :loading="loading"
@@ -64,44 +74,74 @@
       >
         Próxima página
       </v-btn>
+      <v-btn
+        color="green"
+        dark
+        class="mx-4"
+        :loading="loading"
+        :disabled="loading"
+        @click="goToEnd"
+      >
+        Última
+      </v-btn>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { fetchLength, fetchDeputies } from '@/utils/deputies'
+import {
+  fetchLength,
+  fetchDeputies,
+  verifyCurrentPageCache,
+} from '@/utils/deputies'
 
 export default {
   data: () => ({
-    items: null,
+    items: [],
     pageSizes: [4, 8, 12, 16, 32, 64],
-    length: null,
+    length: 0,
     currentPage: 1,
     perPage: 12,
     nextStatus: true,
     prevStatus: false,
     loading: false,
   }),
+  beforeMount() {
+    verifyCurrentPageCache(this)
+  },
   mounted() {
-    fetchDeputies(this)
+    fetchDeputies(this, this.currentPage)
   },
   methods: {
+    goToStart() {
+      localStorage.setItem('currentPage', '1')
+      fetchDeputies(this)
+    },
+    goToEnd() {
+      localStorage.setItem('currentPage', this.length)
+      fetchDeputies(this, this.length)
+    },
     previousPage() {
+      verifyCurrentPageCache(this)
       const prev = this.currentPage - 1
+      localStorage.setItem('currentPage', prev)
       if (prev > 0) {
         fetchDeputies(this, prev)
       }
     },
     nextPage() {
+      verifyCurrentPageCache(this)
       const next = this.currentPage + 1
+      localStorage.setItem('currentPage', next)
       if (next <= this.length) {
         fetchDeputies(this, next)
       }
     },
     updatePageSize(e) {
+      localStorage.setItem('currentPage', '1')
       this.perPage = parseInt(e)
       fetchLength(this)
-      fetchDeputies(this, this.currentPage)
+      fetchDeputies(this)
     },
   },
 }
