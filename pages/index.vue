@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { fetchLength, fetchDeputies } from '@/utils/deputados'
+import { fetchLength, fetchDeputies } from '@/utils/deputies'
 
 export default {
   data: () => ({

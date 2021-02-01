@@ -1,6 +1,7 @@
 <template>
   <v-container>
-    <v-layout>
+    <v-progress-circular v-if="loading" indeterminate color="blue" />
+    <v-layout v-else>
       <v-flex md2>
         <v-card flat width="100%">
           <v-img height="400" :src="item.ultimoStatus.urlFoto" />
@@ -42,7 +43,9 @@
         </p>
         <p>
           <strong class="d-block">Idade:</strong>
-          <span class="grey--text">{{ getAge(item.dataNascimento) }} anos</span>
+          <span class="grey--text">
+            {{ calculateAge(item.dataNascimento) }} anos
+          </span>
         </p>
         <p>
           <strong class="d-block">Data de nascimento:</strong>
@@ -64,58 +67,29 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { fetchDeputy, convertDate, calculateAge } from '@/utils/deputy'
 
 export default {
-  asyncData({ params }) {
-    return axios
-      .get(process.env.api + `deputados/${params.id}`, {
-        accept: 'application/json',
-      })
-      .then((response) => {
-        return {
-          item: response.data.dados,
-        }
-      })
-  },
   data: () => ({
+    loading: true,
+    id: 0,
     item: null,
+    title: '',
   }),
   head() {
     return {
-      title: this.item.ultimoStatus.nomeEleitoral + ' | ',
+      title: `${this.title} | `,
     }
   },
-  // mounted () {},
+  beforeMount() {
+    this.id = this.$route.params.id
+  },
+  mounted() {
+    fetchDeputy(this)
+  },
   methods: {
-    convertDate(date) {
-      const units = date.split('-')
-      return units[2] + '/' + units[1] + '/' + units[0]
-    },
-    getAge(date) {
-      const t = new Date()
-      const curYear = t.getFullYear()
-      const curMonth = t.getMonth() + 1
-      const curDay = t.getDate()
-      const d = date.split('-')
-      const birthYear = +d[0]
-      const birthMonth = +d[1]
-      const birthDay = +d[2]
-
-      let age = curYear - birthYear
-
-      if (curMonth === birthMonth) {
-        age--
-      }
-      if (curDay < birthDay) {
-        age--
-      }
-      if (curMonth < birthMonth) {
-        age--
-      }
-
-      return age < 0 ? 0 : age
-    },
+    convertDate,
+    calculateAge,
   },
 }
 </script>
