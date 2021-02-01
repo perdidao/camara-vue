@@ -69,8 +69,7 @@
 </template>
 
 <script>
-import axios from 'axios'
-// import scope from 'scope'
+import { fetchLength, fetchDeputados } from '@/utils/deputados'
 
 export default {
   data: () => ({
@@ -84,94 +83,25 @@ export default {
     loading: false,
   }),
   mounted() {
-    const pagina = this.pagina
-    this.fetchDeputados(pagina)
+    fetchDeputados(this)
   },
   methods: {
-    fetchLength() {
-      this.loading = true
-
-      const settings = {
-        method: 'GET',
-        url: `${process.env.api}deputados`,
-        headers: {
-          accept: 'application/json',
-        },
-      }
-      axios(settings)
-        .then((response) => {
-          this.length = Math.ceil(response.data.dados.length / this.perPage)
-        })
-        .catch((error) => {
-          error({
-            statusCode: error.response.status,
-            message: 'Página não encontrada',
-          })
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    fetchDeputados(page = 1) {
-      this.loading = true
-      this.pagina = page
-
-      if (!this.length) {
-        this.fetchLength()
-      }
-
-      const settings = {
-        method: 'GET',
-        url: `${process.env.api}deputados?itens=${this.perPage}&pagina=${this.pagina}`,
-        headers: {
-          accept: 'application/json',
-        },
-      }
-
-      axios(settings)
-        .then((response) => {
-          this.items = response.data.dados
-        })
-        .catch((error) => {
-          error({
-            statusCode: error.response.status,
-            message: 'Página não encontrada',
-          })
-        })
-        .finally(() => {
-          this.loading = false
-        })
-
-      this.handleButtonStatus(this.pagina)
-    },
-    handleButtonStatus(currentPage) {
-      if (currentPage === this.length) {
-        this.nextStatus = false
-      } else if (currentPage === 1) {
-        this.prevStatus = false
-      } else {
-        this.prevStatus = true
-        this.nextStatus = true
-      }
-    },
     previousPage() {
       const prev = this.pagina - 1
       if (prev > 0) {
-        this.fetchDeputados(prev)
-        this.pagina = prev
+        fetchDeputados(this, prev)
       }
     },
     nextPage() {
       const next = this.pagina + 1
       if (next <= this.length) {
-        this.fetchDeputados(next)
-        this.pagina = next
+        fetchDeputados(this, next)
       }
     },
     updatePageSize(e) {
       this.perPage = parseInt(e)
-      this.fetchLength()
-      this.fetchDeputados(this.pagina)
+      fetchLength(this)
+      fetchDeputados(this, this.pagina)
     },
   },
 }
