@@ -1,0 +1,11 @@
+camara:
+  container_name: camara
+  image: node:14-alpine
+  command: yarn dev
+  volumes:
+    - ./:/usr/src/app
+  working_dir: /usr/src/app
+  ports:
+    - "3000:3000"
+  environment:
+    HOST: 0.0.0.0
